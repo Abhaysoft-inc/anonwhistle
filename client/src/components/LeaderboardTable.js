@@ -1,6 +1,6 @@
 'use client';
 
-import { FaTrophy, FaMedal, FaAward, FaCheckCircle, FaClock, FaChartLine } from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaAward, FaCheckCircle, FaClock, FaChartLine, FaTrain, FaCar, FaBolt, FaHospital, FaGraduationCap, FaCity, FaSeedling, FaHardHat, FaMoneyBillWave, FaLeaf } from 'react-icons/fa';
 import { MdTrendingUp, MdTrendingDown } from 'react-icons/md';
 
 export default function LeaderboardTable() {
@@ -8,7 +8,8 @@ export default function LeaderboardTable() {
         {
             rank: 1,
             name: 'Ministry of Railways',
-            logo: '🚂',
+            icon: <FaTrain className="text-3xl" />,
+            color: 'text-orange-500',
             casesResolved: 2847,
             totalCases: 3012,
             avgResolutionTime: '12 days',
@@ -20,7 +21,8 @@ export default function LeaderboardTable() {
         {
             rank: 2,
             name: 'Ministry of Road Transport',
-            logo: '🚗',
+            icon: <FaCar className="text-3xl" />,
+            color: 'text-blue-500',
             casesResolved: 1965,
             totalCases: 2145,
             avgResolutionTime: '15 days',
@@ -32,7 +34,8 @@ export default function LeaderboardTable() {
         {
             rank: 3,
             name: 'Ministry of Power',
-            logo: '⚡',
+            icon: <FaBolt className="text-3xl" />,
+            color: 'text-yellow-500',
             casesResolved: 1823,
             totalCases: 2034,
             avgResolutionTime: '14 days',
@@ -44,7 +47,8 @@ export default function LeaderboardTable() {
         {
             rank: 4,
             name: 'Ministry of Health',
-            logo: '🏥',
+            icon: <FaHospital className="text-3xl" />,
+            color: 'text-red-500',
             casesResolved: 1654,
             totalCases: 1891,
             avgResolutionTime: '18 days',
@@ -56,7 +60,8 @@ export default function LeaderboardTable() {
         {
             rank: 5,
             name: 'Ministry of Education',
-            logo: '📚',
+            icon: <FaGraduationCap className="text-3xl" />,
+            color: 'text-purple-500',
             casesResolved: 1432,
             totalCases: 1687,
             avgResolutionTime: '16 days',
@@ -68,7 +73,8 @@ export default function LeaderboardTable() {
         {
             rank: 6,
             name: 'Ministry of Urban Development',
-            logo: '🏙️',
+            icon: <FaCity className="text-3xl" />,
+            color: 'text-indigo-500',
             casesResolved: 1289,
             totalCases: 1567,
             avgResolutionTime: '20 days',
@@ -80,7 +86,8 @@ export default function LeaderboardTable() {
         {
             rank: 7,
             name: 'Ministry of Agriculture',
-            logo: '🌾',
+            icon: <FaSeedling className="text-3xl" />,
+            color: 'text-green-500',
             casesResolved: 1156,
             totalCases: 1423,
             avgResolutionTime: '22 days',
@@ -92,7 +99,8 @@ export default function LeaderboardTable() {
         {
             rank: 8,
             name: 'Ministry of Labour',
-            logo: '👷',
+            icon: <FaHardHat className="text-3xl" />,
+            color: 'text-orange-600',
             casesResolved: 1087,
             totalCases: 1398,
             avgResolutionTime: '25 days',
@@ -104,7 +112,8 @@ export default function LeaderboardTable() {
         {
             rank: 9,
             name: 'Ministry of Finance',
-            logo: '💰',
+            icon: <FaMoneyBillWave className="text-3xl" />,
+            color: 'text-emerald-500',
             casesResolved: 945,
             totalCases: 1234,
             avgResolutionTime: '28 days',
@@ -116,7 +125,8 @@ export default function LeaderboardTable() {
         {
             rank: 10,
             name: 'Ministry of Environment',
-            logo: '🌍',
+            icon: <FaLeaf className="text-3xl" />,
+            color: 'text-teal-500',
             casesResolved: 823,
             totalCases: 1112,
             avgResolutionTime: '24 days',
@@ -125,9 +135,7 @@ export default function LeaderboardTable() {
             trendValue: '+2.3%',
             score: 80.5
         }
-    ];
-
-    const getRankBadge = (rank) => {
+    ]; const getRankBadge = (rank) => {
         switch (rank) {
             case 1:
                 return <FaTrophy className="text-3xl text-yellow-400" />;
@@ -184,14 +192,14 @@ export default function LeaderboardTable() {
 
                         {/* Department */}
                         <div className="col-span-3 flex items-center gap-3">
-                            <div className="text-4xl">{dept.logo}</div>
+                            <div className={`p-3 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 ${dept.color}`}>
+                                {dept.icon}
+                            </div>
                             <div>
                                 <div className="text-white font-bold text-lg">{dept.name}</div>
                                 <div className="text-gray-400 text-sm">Rank #{dept.rank}</div>
                             </div>
-                        </div>
-
-                        {/* Cases Resolved */}
+                        </div>                        {/* Cases Resolved */}
                         <div className="col-span-2">
                             <div className="text-white font-bold text-xl">
                                 {dept.casesResolved.toLocaleString()}
@@ -245,16 +253,16 @@ export default function LeaderboardTable() {
                         {/* Header */}
                         <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="text-4xl">{dept.logo}</div>
+                                <div className={`p-3 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 ${dept.color}`}>
+                                    {dept.icon}
+                                </div>
                                 <div>
                                     <div className="text-white font-bold">{dept.name}</div>
                                     <div className="text-gray-400 text-sm">Rank #{dept.rank}</div>
                                 </div>
                             </div>
                             {getRankBadge(dept.rank)}
-                        </div>
-
-                        {/* Stats Grid */}
+                        </div>                        {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-3">
                             <div className="bg-white/5 rounded-xl p-3">
                                 <div className="text-gray-400 text-xs mb-1">Cases Resolved</div>
