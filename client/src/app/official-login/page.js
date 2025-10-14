@@ -1,17 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function OfficialLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
+    const router = useRouter();
 
     const handleLogin = (e) => {
         e.preventDefault();
         console.log('Login:', { email, password, role });
-        alert(`Login successful!\nEmail: ${email}\nRole: ${role}`);
+        // Store user credentials in localStorage
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userRole', role);
+        // Redirect to officials dashboard
+        router.push('/officials-dashboard');
     };
 
     return (
