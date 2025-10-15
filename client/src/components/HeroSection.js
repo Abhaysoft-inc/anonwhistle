@@ -13,17 +13,24 @@ export default function HeroSection() {
     ];
 
     return (
-        <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto text-center">
+        <section className="min-h-screen w-full relative bg-black pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+            {/* Ocean Abyss Background with Top Glow */}
+            <div
+                className="absolute inset-0 z-0"
+                style={{
+                    background:
+                        'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(6, 182, 212, 0.25), transparent 70%), #000000',
+                }}
+            />
+            <div className="relative z-10 max-w-7xl mx-auto text-center">
                 <div className="flex justify-center mb-6">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-cyan-500 blur-3xl opacity-30 rounded-full"></div>
                         <FaUserSecret className="text-8xl text-cyan-400 relative" />
                     </div>
                 </div>
                 <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                     Expose Corruption <br />
-                    <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                    <span className="text-cyan-400">
                         Remain Anonymous
                     </span>
                 </h1>
@@ -33,7 +40,7 @@ export default function HeroSection() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link href="/register">
-                        <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-cyan-500/50 transition-all transform hover:scale-105">
+                        <button className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-4 rounded-full font-bold text-lg transition">
                             <div className="flex items-center gap-2 justify-center">
                                 <HiOutlineDocumentReport className="text-2xl" />
                                 Submit Anonymous Report

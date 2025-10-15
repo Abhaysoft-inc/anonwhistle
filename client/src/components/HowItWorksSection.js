@@ -46,7 +46,7 @@ export default function HowItWorksSection() {
                 <div className="grid md:grid-cols-4 gap-8">
                     {steps.map((item, index) => (
                         <div key={index} className="text-center relative">
-                            <div className="bg-gradient-to-br from-cyan-500/20 to-purple-600/20 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4 border-2 border-cyan-400/30">
+                            <div className="bg-gray-900/60 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4 border-2 border-gray-700">
                                 <div className="text-cyan-400">
                                     {item.icon}
                                 </div>

@@ -76,7 +76,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+        <div className="min-h-screen bg-gray-950">
             {/* Navigation */}
             <nav className="fixed w-full bg-gray-900/95 backdrop-blur-md z-50 border-b border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,7 +127,7 @@ export default function Dashboard() {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-blue-400 text-sm font-medium">Total Complaints</p>
@@ -138,7 +138,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-green-400 text-sm font-medium">Resolved</p>
@@ -149,7 +149,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-orange-400 text-sm font-medium">Pending</p>
@@ -167,8 +167,8 @@ export default function Dashboard() {
                         <button
                             onClick={() => setActiveTab('raise')}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'raise'
-                                    ? 'bg-blue-500 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                                ? 'bg-blue-500 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                                 }`}
                         >
                             <FaPlus className="text-sm" />
@@ -177,8 +177,8 @@ export default function Dashboard() {
                         <button
                             onClick={() => setActiveTab('track')}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'track'
-                                    ? 'bg-blue-500 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                                ? 'bg-blue-500 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                                 }`}
                         >
                             <FaHistory className="text-sm" />
@@ -283,7 +283,7 @@ export default function Dashboard() {
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
-                                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] hover:shadow-xl shadow-blue-500/25"
+                                    className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all"
                                 >
                                     <div className="flex items-center justify-center gap-2">
                                         <FaShieldAlt />
@@ -340,8 +340,8 @@ export default function Dashboard() {
                                                                 {c.id}
                                                             </span>
                                                             <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${c.statusColor === 'green' ? 'bg-green-500/20 border border-green-500/30 text-green-400' :
-                                                                    c.statusColor === 'yellow' ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400' :
-                                                                        'bg-orange-500/20 border border-orange-500/30 text-orange-400'
+                                                                c.statusColor === 'yellow' ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400' :
+                                                                    'bg-orange-500/20 border border-orange-500/30 text-orange-400'
                                                                 }`}>
                                                                 {getStatusIcon(c.status)}
                                                                 {c.status}

@@ -149,10 +149,10 @@ export default function LeaderboardTable() {
     };
 
     const getRankColor = (rank) => {
-        if (rank === 1) return 'from-yellow-500/20 to-orange-500/20 border-yellow-500/50';
-        if (rank === 2) return 'from-gray-300/20 to-gray-400/20 border-gray-300/50';
-        if (rank === 3) return 'from-orange-500/20 to-red-500/20 border-orange-500/50';
-        return 'from-white/5 to-white/0 border-white/10';
+        if (rank === 1) return 'bg-yellow-500/10 border-yellow-500/40';
+        if (rank === 2) return 'bg-gray-400/10 border-gray-400/40';
+        if (rank === 3) return 'bg-orange-500/10 border-orange-500/40';
+        return 'bg-gray-900/60 border-gray-700';
     };
 
     const getScoreColor = (score) => {
@@ -179,7 +179,7 @@ export default function LeaderboardTable() {
             {departments.map((dept) => (
                 <div
                     key={dept.rank}
-                    className={`bg-gradient-to-r ${getRankColor(
+                    className={`${getRankColor(
                         dept.rank
                     )} backdrop-blur-sm rounded-2xl p-6 border transition-all hover:shadow-xl hover:shadow-cyan-500/20 hover:scale-[1.02]`}
                 >
@@ -192,7 +192,7 @@ export default function LeaderboardTable() {
 
                         {/* Department */}
                         <div className="col-span-3 flex items-center gap-3">
-                            <div className={`p-3 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 ${dept.color}`}>
+                            <div className={`p-3 bg-gray-900/60 rounded-xl border border-gray-700 ${dept.color}`}>
                                 {dept.icon}
                             </div>
                             <div>
@@ -214,7 +214,7 @@ export default function LeaderboardTable() {
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 bg-white/10 rounded-full h-3 overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-cyan-500 to-green-500 rounded-full transition-all"
+                                        className="h-full bg-cyan-500 rounded-full transition-all"
                                         style={{ width: `${dept.resolutionRate}%` }}
                                     ></div>
                                 </div>
@@ -253,7 +253,7 @@ export default function LeaderboardTable() {
                         {/* Header */}
                         <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
-                                <div className={`p-3 bg-gradient-to-br from-white/10 to-white/5 rounded-xl border border-white/20 ${dept.color}`}>
+                                <div className={`p-3 bg-gray-900/60 rounded-xl border border-gray-700 ${dept.color}`}>
                                     {dept.icon}
                                 </div>
                                 <div>
@@ -275,7 +275,7 @@ export default function LeaderboardTable() {
                                 <div className="text-cyan-400 font-bold">{dept.resolutionRate}%</div>
                                 <div className="w-full bg-white/10 rounded-full h-2 mt-1">
                                     <div
-                                        className="h-full bg-gradient-to-r from-cyan-500 to-green-500 rounded-full"
+                                        className="h-full bg-cyan-500 rounded-full"
                                         style={{ width: `${dept.resolutionRate}%` }}
                                     ></div>
                                 </div>

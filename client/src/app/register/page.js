@@ -25,7 +25,7 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="min-h-screen bg-gray-950">
             {/* Navigation */}
             <nav className="fixed w-full bg-black/30 backdrop-blur-md z-50 border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,17 +49,13 @@ export default function Register() {
                     <div className="text-center mb-12">
                         <div className="flex justify-center mb-6">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-cyan-500 blur-3xl opacity-30 rounded-full"></div>
-                                <FaUserSecret className="text-7xl text-cyan-400 relative" />
+
                             </div>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                        <p className="text-2xl md:text-2xl font-bold text-white mb-4">
                             Anonymous Registration
-                        </h1>
-                        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                            Connect your crypto wallet to create a secure, anonymous account.
-                            No personal information required.
                         </p>
+
                     </div>
 
                     {!isConnected ? (

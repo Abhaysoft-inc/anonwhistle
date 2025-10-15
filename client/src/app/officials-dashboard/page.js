@@ -134,7 +134,7 @@ export default function OfficialDashboard() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900">
+        <div className="min-h-screen bg-gray-950">
             {/* Navigation */}
             <nav className="fixed w-full bg-gray-900/95 backdrop-blur-md z-50 border-b border-gray-700">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,7 +189,7 @@ export default function OfficialDashboard() {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                        <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-blue-400 text-sm font-medium">Total Cases</p>
@@ -198,7 +198,7 @@ export default function OfficialDashboard() {
                                 <FaClipboardList className="text-blue-400 text-2xl" />
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-orange-400 text-sm font-medium">Pending</p>
@@ -207,7 +207,7 @@ export default function OfficialDashboard() {
                                 <FaClock className="text-orange-400 text-2xl" />
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-yellow-400 text-sm font-medium">Investigating</p>
@@ -216,7 +216,7 @@ export default function OfficialDashboard() {
                                 <FaSearch className="text-yellow-400 text-2xl" />
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-green-400 text-sm font-medium">Resolved</p>
@@ -225,7 +225,7 @@ export default function OfficialDashboard() {
                                 <FaCheckCircle className="text-green-400 text-2xl" />
                             </div>
                         </div>
-                        <div className="bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/30 rounded-2xl p-6">
+                        <div className="bg-gray-900/60 border border-gray-700 rounded-2xl p-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-red-400 text-sm font-medium">Critical</p>
@@ -241,8 +241,8 @@ export default function OfficialDashboard() {
                         <button
                             onClick={() => setActiveTab('overview')}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'overview'
-                                    ? 'bg-blue-500 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                                ? 'bg-blue-500 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                                 }`}
                         >
                             <FaChartLine className="text-sm" />
@@ -251,8 +251,8 @@ export default function OfficialDashboard() {
                         <button
                             onClick={() => setActiveTab('complaints')}
                             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'complaints'
-                                    ? 'bg-blue-500 text-white shadow-lg'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+                                ? 'bg-blue-500 text-white shadow-lg'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
                                 }`}
                         >
                             <FaClipboardList className="text-sm" />
@@ -360,8 +360,8 @@ export default function OfficialDashboard() {
                                                         {complaint.id}
                                                     </span>
                                                     <span className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${complaint.status === 'Resolved' ? 'bg-green-500/20 border border-green-500/30 text-green-400' :
-                                                            complaint.status === 'Under Investigation' ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400' :
-                                                                'bg-orange-500/20 border border-orange-500/30 text-orange-400'
+                                                        complaint.status === 'Under Investigation' ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400' :
+                                                            'bg-orange-500/20 border border-orange-500/30 text-orange-400'
                                                         }`}>
                                                         {getStatusIcon(complaint.status)}
                                                         {complaint.status}

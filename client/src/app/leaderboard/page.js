@@ -9,9 +9,9 @@ import Footer from '@/components/Footer';
 
 export default function Leaderboard() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="min-h-screen bg-gray-950">
             {/* Navigation */}
-            <nav className="fixed w-full bg-black/30 backdrop-blur-md z-50 border-b border-white/10">
+            <nav className="fixed w-full bg-gray-950 z-50 border-b border-gray-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition">
@@ -24,7 +24,7 @@ export default function Leaderboard() {
                                 <span>Back to Home</span>
                             </Link>
                             <Link href="/register">
-                                <button className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
+                                <button className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-full font-semibold shadow transition-all">
                                     Get Started
                                 </button>
                             </Link>

@@ -14,30 +14,17 @@ export default function WalletSelector({ onWalletConnect }) {
             id: 'metamask',
             name: 'MetaMask',
             icon: <RiWallet3Fill className="text-5xl" />,
-            color: 'from-orange-500 to-orange-600',
+            color: 'text-orange-400',
             description: 'Connect with MetaMask wallet'
         },
         {
             id: 'walletconnect',
             name: 'WalletConnect',
             icon: <MdAccountBalanceWallet className="text-5xl" />,
-            color: 'from-blue-500 to-blue-600',
+            color: 'text-blue-400',
             description: 'Connect via WalletConnect protocol'
         },
-        {
-            id: 'coinbase',
-            name: 'Coinbase Wallet',
-            icon: <FaWallet className="text-5xl" />,
-            color: 'from-indigo-500 to-indigo-600',
-            description: 'Connect with Coinbase Wallet'
-        },
-        {
-            id: 'ethereum',
-            name: 'Ethereum Wallet',
-            icon: <FaEthereum className="text-5xl" />,
-            color: 'from-purple-500 to-purple-600',
-            description: 'Connect any Ethereum wallet'
-        }
+
     ];
 
     const handleWalletConnect = async (walletId) => {
@@ -63,8 +50,8 @@ export default function WalletSelector({ onWalletConnect }) {
                     className={`relative group ${isConnecting && selectedWallet === wallet.id ? 'opacity-75' : ''
                         }`}
                 >
-                    <div className="bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-cyan-400/50 transition-all hover:shadow-xl hover:shadow-cyan-500/20 group-hover:scale-105">
-                        <div className={`bg-gradient-to-r ${wallet.color} bg-clip-text text-transparent mb-4 flex justify-center`}>
+                    <div className="bg-gray-900/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 hover:border-cyan-400/50 transition-all hover:shadow-xl hover:shadow-cyan-500/20 group-hover:scale-105">
+                        <div className={`mb-4 flex justify-center ${wallet.color}`}>
                             {wallet.icon}
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2">{wallet.name}</h3>

@@ -39,7 +39,7 @@ export default function LeaderboardStats() {
             {stats.map((stat, index) => (
                 <div
                     key={index}
-                    className="bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-cyan-400/50 transition-all hover:shadow-xl hover:shadow-cyan-500/20"
+                    className="bg-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 hover:border-cyan-400/50 transition-all hover:shadow-xl hover:shadow-cyan-500/20"
                 >
                     <div className="flex items-start justify-between mb-4">
                         <div>{stat.icon}</div>

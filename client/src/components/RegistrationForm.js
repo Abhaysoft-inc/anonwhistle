@@ -109,7 +109,7 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
                         type="submit"
                         disabled={!agreedToTerms}
                         className={`w-full py-4 rounded-full font-bold text-lg transition-all ${agreedToTerms
-                            ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white hover:shadow-2xl hover:shadow-cyan-500/50 transform hover:scale-105'
+                            ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
                             : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                             }`}
                     >

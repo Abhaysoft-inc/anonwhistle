@@ -46,7 +46,7 @@ export default function SecuritySection() {
                         {trustBadges.map((item, index) => (
                             <div
                                 key={index}
-                                className="bg-gradient-to-br from-cyan-500/10 to-purple-600/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center hover:scale-105 transition-transform"
+                                className="bg-gray-900/60 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 text-center hover:scale-105 transition-transform"
                             >
                                 <div className="text-5xl text-cyan-400 mb-4 flex justify-center">
                                     {item.icon}
