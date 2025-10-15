@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FaShieldAlt, FaNetworkWired, FaPlus, FaHistory, FaClock, FaCheckCircle, FaExclamationCircle, FaFileAlt, FaUser, FaMicrophone, FaMicrophoneSlash, FaExclamationTriangle } from 'react-icons/fa';
 import { BiLogOut } from 'react-icons/bi';
 import Link from 'next/link';
+import FloatingPanicButton from '../../components/FloatingPanicButton';
 
 export default function Dashboard() {
     const [walletAddress, setWalletAddress] = useState('');
@@ -374,6 +375,9 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+            
+            {/* Floating Panic Button */}
+            <FloatingPanicButton />
         </>
     );
 }

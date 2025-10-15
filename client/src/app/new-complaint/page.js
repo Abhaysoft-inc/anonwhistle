@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaShieldAlt, FaNetworkWired, FaArrowLeft, FaFileAlt, FaUser, FaLock, FaGavel, FaCalendarAlt, FaMapMarkerAlt, FaPaperclip, FaExclamationTriangle } from 'react-icons/fa';
 import { BiLogOut } from 'react-icons/bi';
+import FloatingPanicButton from '../../components/FloatingPanicButton';
 
 export default function NewComplaint() {
   const router = useRouter();
@@ -490,6 +491,9 @@ export default function NewComplaint() {
           )}
         </div>
       </div>
+      
+      {/* Floating Panic Button */}
+      <FloatingPanicButton />
     </div>
   );
 }

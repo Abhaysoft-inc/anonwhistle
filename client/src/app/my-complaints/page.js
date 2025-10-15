@@ -5,24 +5,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaShieldAlt, FaNetworkWired, FaArrowLeft, FaUser, FaSearch, FaEye, FaCalendarAlt, FaBuilding, FaExclamationTriangle, FaCheckCircle, FaClock } from 'react-icons/fa';
 import { BiLogOut, BiRefresh } from 'react-icons/bi';
+import FloatingPanicButton from '../../components/FloatingPanicButton';
 
 export default function MyComplaints() {
   const router = useRouter();
-  const [walletAddress, setWalletAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState('0x1234...5678');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  useEffect(() => {
-    const address = localStorage.getItem('walletAddress');
-    if (!address) {
-      router.push('/register');
-    } else {
-      setWalletAddress(`${address.slice(0, 6)}...${address.slice(-4)}`);
-    }
-  }, [router]);
-
   const handleLogout = () => {
-    localStorage.removeItem('walletAddress');
     router.push('/');
   };
 
@@ -221,10 +212,12 @@ export default function MyComplaints() {
                       </div>
                     </div>
                     
-                    <button className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200">
-                      <FaEye className="text-sm" />
-                      <span className="text-sm font-medium">View Details</span>
-                    </button>
+                    <Link href={`/complaint-progress/${complaint.id}`}>
+                      <button className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors border border-blue-200">
+                        <FaEye className="text-sm" />
+                        <span className="text-sm font-medium">View Progress</span>
+                      </button>
+                    </Link>
                   </div>
                 </div>
               ))
@@ -248,6 +241,9 @@ export default function MyComplaints() {
           </div>
         </div>
       </div>
+      
+      {/* Floating Panic Button */}
+      <FloatingPanicButton />
     </div>
   );
 }

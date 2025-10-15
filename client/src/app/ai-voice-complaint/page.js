@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaMicrophone, FaMicrophoneSlash, FaVolumeUp, FaArrowLeft, FaCheckCircle, FaExclamationTriangle, FaUser, FaFileAlt, FaMapMarkerAlt, FaCalendarAlt, FaRobot, FaBrain, FaSpinner } from 'react-icons/fa';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import FloatingPanicButton from '../../components/FloatingPanicButton';
 
 export default function AIVoiceComplaint() {
     const router = useRouter();
@@ -897,6 +898,9 @@ export default function AIVoiceComplaint() {
                     </div>
                 </div>
             </div>
+            
+            {/* Floating Panic Button */}
+            <FloatingPanicButton />
         </div>
     );
 }
