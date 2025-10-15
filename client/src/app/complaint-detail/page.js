@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     FaArrowLeft, FaRobot, FaBrain, FaUserSecret, FaFileAlt, FaMicroscope,
@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import { MdAnalytics, MdSecurity, MdVerifiedUser, MdGavel, MdAssignment } from 'react-icons/md';
 
-export default function ComplaintDetailPage() {
+function ComplaintDetailContent() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [complaint, setComplaint] = useState(null);
@@ -605,5 +605,24 @@ export default function ComplaintDetailPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+function LoadingFallback() {
+    return (
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+            <div className="text-center">
+                <FaSpinner className="text-4xl text-blue-600 animate-spin mx-auto mb-4" />
+                <p className="text-gray-600">Loading complaint details...</p>
+            </div>
+        </div>
+    );
+}
+
+export default function ComplaintDetailPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <ComplaintDetailContent />
+        </Suspense>
     );
 }
