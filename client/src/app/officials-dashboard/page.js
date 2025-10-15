@@ -19,8 +19,7 @@ export default function OfficialDashboard() {
     const [userRole, setUserRole] = useState('');
     const [userEmail, setUserEmail] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [selectedComplaint, setSelectedComplaint] = useState(null);
-    const [showDetailModal, setShowDetailModal] = useState(false);
+
     const [filterDepartment, setFilterDepartment] = useState('all');
     const [filterPriority, setFilterPriority] = useState('all');
     const [dateRange, setDateRange] = useState('30');
@@ -575,10 +574,7 @@ export default function OfficialDashboard() {
                                 </div>
                                 <div className="ml-6 flex gap-2">
                                     <button
-                                        onClick={() => {
-                                            setSelectedComplaint(complaint);
-                                            setShowDetailModal(true);
-                                        }}
+                                        onClick={() => router.push(`/complaint-detail?id=${complaint.id}`)}
                                         className="bg-[#DDDBF1] hover:bg-[#DDDBF1]/80 text-[#383F51] px-4 py-2 rounded-lg font-medium transition flex items-center gap-2"
                                     >
                                         <FaEye />
@@ -596,143 +592,7 @@ export default function OfficialDashboard() {
         </div>
     );
 
-    // Detailed Complaint Modal
-    const renderComplaintDetailModal = () => {
-        if (!selectedComplaint) return null;
 
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                    <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900">{selectedComplaint.title}</h2>
-                            <p className="text-gray-600 mt-1">Case ID: {selectedComplaint.id}</p>
-                        </div>
-                        <button
-                            onClick={() => setShowDetailModal(false)}
-                            className="p-2 hover:bg-gray-100 rounded-lg transition"
-                        >
-                            <FaTimes className="text-gray-500" />
-                        </button>
-                    </div>
-
-                    <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Main Details */}
-                        <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-gray-50 rounded-lg p-4">
-                                <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-                                <p className="text-gray-700">{selectedComplaint.description}</p>
-                            </div>
-
-                            {selectedComplaint.evidence && (
-                                <div>
-                                    <h3 className="font-semibold text-gray-900 mb-3">Evidence Files</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {selectedComplaint.evidence.map((file, index) => (
-                                            <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center space-x-2">
-                                                <FaFileAlt className="text-blue-600" />
-                                                <span className="text-sm text-blue-700 truncate">{file}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {selectedComplaint.timeline && (
-                                <div>
-                                    <h3 className="font-semibold text-gray-900 mb-3">Case Timeline</h3>
-                                    <div className="space-y-3">
-                                        {selectedComplaint.timeline.map((item, index) => (
-                                            <div key={index} className="flex items-center space-x-4 pb-3 border-b border-gray-100 last:border-0">
-                                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-gray-900">{item.action}</p>
-                                                    <p className="text-sm text-gray-600">by {item.by} • {item.date}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Side Details */}
-                        <div className="space-y-6">
-                            <div className="bg-gray-50 rounded-lg p-4">
-                                <h3 className="font-semibold text-gray-900 mb-3">Case Information</h3>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Status:</span>
-                                        <span className={`px-2 py-1 rounded-full text-sm font-medium ${selectedComplaint.status === 'Resolved' ? 'bg-green-100 text-green-800' :
-                                            selectedComplaint.status === 'Under Investigation' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-orange-100 text-orange-800'
-                                            }`}>
-                                            {selectedComplaint.status}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Priority:</span>
-                                        <span className={`px-2 py-1 rounded-full text-sm font-medium ${getPriorityColor(selectedComplaint.priority)}`}>
-                                            {selectedComplaint.priority}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Department:</span>
-                                        <span className="font-medium">{selectedComplaint.department}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Investigator:</span>
-                                        <span className="font-medium">{selectedComplaint.investigator}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Date Filed:</span>
-                                        <span className="font-medium">{selectedComplaint.date}</span>
-                                    </div>
-                                    {selectedComplaint.location && (
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600">Location:</span>
-                                            <span className="font-medium">{selectedComplaint.location}</span>
-                                        </div>
-                                    )}
-                                    {selectedComplaint.estimatedLoss && (
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600">Est. Loss:</span>
-                                            <span className="font-medium text-red-600">{selectedComplaint.estimatedLoss}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="bg-blue-50 rounded-lg p-4">
-                                <h3 className="font-semibold text-gray-900 mb-3">Public Support</h3>
-                                <div className="text-center">
-                                    <div className="text-3xl font-bold text-blue-600">{selectedComplaint.publicSupport || 0}</div>
-                                    <div className="text-sm text-gray-600">Citizens Supporting</div>
-                                    {selectedComplaint.witnesses && (
-                                        <div className="mt-2 text-sm text-gray-600">
-                                            {selectedComplaint.witnesses} Witnesses Available
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition">
-                                    Update Status
-                                </button>
-                                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition">
-                                    Assign Investigator
-                                </button>
-                                <button className="w-full bg-green-100 hover:bg-green-200 text-green-700 py-2 px-4 rounded-lg font-medium transition">
-                                    Add Note
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
     const renderAnalytics = () => (
         <div className="space-y-6">
@@ -1041,8 +901,7 @@ export default function OfficialDashboard() {
                 </div>
             </div>
 
-            {/* Complaint Detail Modal */}
-            {showDetailModal && renderComplaintDetailModal()}
+
         </div>
     );
 }

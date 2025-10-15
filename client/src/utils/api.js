@@ -1,94 +1,97 @@
-// API Base URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// Dummy mode - no server calls at all
 
-class ApiError extends Error {
-    constructor(message, status, data) {
-        super(message);
-        this.status = status;
-        this.data = data;
-    }
-}
-
-// Generic API call function
-async function apiCall(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-
-    const config = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        },
-        ...options
-    };
-
-    // Add auth token if available
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    try {
-        const response = await fetch(url, config);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new ApiError(
-                data.message || data.error || 'An error occurred',
-                response.status,
-                data
-            );
-        }
-
-        return data;
-    } catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
-        }
-
-        // Network or other errors
-        throw new ApiError(
-            'Network error. Please check your connection and try again.',
-            0,
-            null
-        );
-    }
-}
-
-// Auth API calls
+// Frontend-only Auth API calls
 export const authAPI = {
-    // Register/Login with wallet
+    // Register/Login with wallet - Frontend only
     async registerWithWallet(walletAddress, username = null) {
-        return apiCall('/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({
-                walletAddress,
-                username
-            })
-        });
+        // Simulate API delay for UX
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const userData = {
+            id: Date.now().toString(),
+            walletAddress,
+            username: username || `user_${walletAddress.slice(-6)}`,
+            registrationDate: new Date().toISOString(),
+            isNewUser: true
+        };
+
+        // Store user data in localStorage
+        localStorage.setItem('authToken', `token_${Date.now()}`);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem('walletAddress', walletAddress);
+
+        return {
+            success: true,
+            data: { user: userData },
+            isNewUser: true,
+            message: 'Registration successful'
+        };
     },
 
-    // Login with wallet
+    // Login with wallet - Frontend only
     async loginWithWallet(walletAddress) {
-        return apiCall('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                walletAddress
-            })
-        });
+        // Simulate API delay for UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Check if user exists in localStorage
+        const existingUserData = localStorage.getItem('userData');
+        if (existingUserData) {
+            const userData = JSON.parse(existingUserData);
+            if (userData.walletAddress === walletAddress) {
+                // Update login info
+                userData.lastLogin = new Date().toISOString();
+                userData.loginCount = (userData.loginCount || 0) + 1;
+
+                localStorage.setItem('authToken', `token_${Date.now()}`);
+                localStorage.setItem('userData', JSON.stringify(userData));
+
+                return {
+                    success: true,
+                    data: { user: userData },
+                    isNewUser: false,
+                    message: 'Login successful'
+                };
+            }
+        }
+
+        // Auto-register if user doesn't exist
+        return this.registerWithWallet(walletAddress);
     },
 
-    // Get current user profile
+    // Get current user profile - Frontend only
     async getProfile() {
-        return apiCall('/auth/me');
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const userData = localStorage.getItem('userData');
+        if (!userData) {
+            throw new Error('No user data found');
+        }
+
+        return {
+            success: true,
+            data: { user: JSON.parse(userData) }
+        };
     },
 
-    // Update user profile
+    // Update user profile - Frontend only
     async updateProfile(profileData) {
-        return apiCall('/auth/profile', {
-            method: 'PUT',
-            body: JSON.stringify(profileData)
-        });
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const userData = localStorage.getItem('userData');
+        if (!userData) {
+            throw new Error('No user data found');
+        }
+
+        const user = JSON.parse(userData);
+        const updatedUser = { ...user, ...profileData };
+
+        localStorage.setItem('userData', JSON.stringify(updatedUser));
+
+        return {
+            success: true,
+            data: { user: updatedUser },
+            message: 'Profile updated successfully'
+        };
     },
 
     // Get user statistics
@@ -205,4 +208,4 @@ export const storage = {
     }
 };
 
-export { ApiError };
+// No exports needed for dummy mode
