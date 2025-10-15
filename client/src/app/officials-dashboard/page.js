@@ -341,6 +341,7 @@ export default function OfficialDashboard() {
                 <LineChart
                     title="Monthly Complaint Trends"
                     data={[12, 19, 15, 25, 22, 30, 28]}
+                    labels={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul']}
                     trend={15}
                 />
                 <ChartCard
