@@ -35,12 +35,9 @@ export default function AIVoiceComplaint() {
         genAI.current = new GoogleGenerativeAI(API_KEY);
     }, []);
 
-    // Initialize speech synthesis and recognition
+    // Initialize speech recognition and Gemini AI
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            // Initialize speech synthesis
-            synthRef.current = window.speechSynthesis;
-
             // Initialize speech recognition
             if ('webkitSpeechRecognition' in window) {
                 recognitionRef.current = new window.webkitSpeechRecognition();
@@ -79,35 +76,12 @@ export default function AIVoiceComplaint() {
             }
         }
 
-        // Start with welcome message
-        setTimeout(() => {
-            speakText("Welcome to the AI-Powered Voice Complaint System. I will listen to your entire complaint and use advanced AI to analyze and structure it automatically. Please click the microphone and describe your complaint in detail. You can speak for as long as needed - I'll be listening to everything you say.");
-        }, 1000);
-
         return () => {
             if (recognitionRef.current) {
                 recognitionRef.current.stop();
             }
-            if (synthRef.current) {
-                synthRef.current.cancel();
-            }
         };
     }, []);
-
-    const speakText = (text) => {
-        if (synthRef.current && text) {
-            synthRef.current.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.8;
-            utterance.pitch = 1;
-            utterance.volume = 0.8;
-            
-            utterance.onstart = () => setIsSpeaking(true);
-            utterance.onend = () => setIsSpeaking(false);
-            
-            synthRef.current.speak(utterance);
-        }
-    };
 
     const startListening = () => {
         if (recognitionRef.current && !isListening) {
@@ -116,7 +90,6 @@ export default function AIVoiceComplaint() {
             setCurrentPhase('listening');
             setIsListening(true);
             recognitionRef.current.start();
-            speakText("I'm listening. Please tell me about your complaint in detail.");
         }
     };
 
@@ -126,10 +99,7 @@ export default function AIVoiceComplaint() {
             setIsListening(false);
             
             if (fullTranscript.trim().length > 10) {
-                speakText("Thank you. I've recorded your complaint. Now I'll analyze it using AI to create a structured report. Please wait while I process this information.");
-                setTimeout(() => analyzeComplaintWithGemini(), 2000);
-            } else {
-                speakText("I didn't capture enough information. Please try speaking again and describe your complaint in more detail.");
+                setTimeout(() => analyzeComplaintWithGemini(), 1000);
             }
         }
     };
@@ -179,15 +149,10 @@ export default function AIVoiceComplaint() {
             setComplaintData(analysisData);
             setAnalysisComplete(true);
             setCurrentPhase('reviewing');
-            
-            setTimeout(() => {
-                speakText(`Analysis complete! I've structured your complaint with the title: "${analysisData.title}". The category is ${analysisData.category} with ${analysisData.priority} priority. Please review the details on screen. Say "submit" to file the complaint, or "modify" if you want to make changes.`);
-            }, 1000);
 
         } catch (error) {
             console.error('Error analyzing complaint with Gemini:', error);
-            speakText("I encountered an error while analyzing your complaint. Let me try a different approach or please speak your complaint again.");
-            setCurrentPhase('listening');
+            setCurrentPhase('ready');
         } finally {
             setIsAnalyzing(false);
         }
@@ -199,27 +164,21 @@ export default function AIVoiceComplaint() {
         if (lowerCommand.includes('submit') || lowerCommand.includes('file') || lowerCommand.includes('confirm')) {
             submitComplaint();
         } else if (lowerCommand.includes('modify') || lowerCommand.includes('change') || lowerCommand.includes('edit')) {
-            speakText("Please speak your complaint again, and I'll re-analyze it for you.");
             setAnalysisComplete(false);
-            setCurrentPhase('listening');
+            setCurrentPhase('ready');
             setComplaintData({
                 title: '', description: '', category: '', location: '',
                 date: '', reporterName: '', priority: 'medium', summary: '', recommendations: ''
             });
-        } else if (lowerCommand.includes('repeat') || lowerCommand.includes('read again')) {
-            speakText(`Your complaint title is: "${complaintData.title}". Category: ${complaintData.category}. Priority: ${complaintData.priority}. Say submit to file this complaint or modify to make changes.`);
         }
     };
 
     const submitComplaint = async () => {
-        setIsProcessing(true);
         setCurrentPhase('submitting');
-        speakText('Submitting your complaint to the system. Please wait while I process this securely.');
         
         // Simulate API call with complaint data
         setTimeout(() => {
             const complaintId = 'CMP-' + Date.now().toString().slice(-8);
-            speakText(`Your complaint has been successfully submitted with ID ${complaintId}. You will receive confirmation and updates on the progress. Thank you for using the AI Voice Complaint System. Returning to dashboard.`);
             
             // Store complaint data (in real app, this would go to API)
             localStorage.setItem('lastComplaint', JSON.stringify({
@@ -231,22 +190,14 @@ export default function AIVoiceComplaint() {
             
             setTimeout(() => {
                 router.push('/dashboard');
-            }, 4000);
+            }, 2000);
         }, 3000);
     };
 
-    // Auto-detect voice commands when transcript changes
-    useEffect(() => {
-        if (fullTranscript && analysisComplete && !isListening) {
-            const lastWords = fullTranscript.slice(-50).toLowerCase();
-            if (lastWords.includes('submit') || lastWords.includes('confirm') || lastWords.includes('modify')) {
-                handleVoiceCommand(lastWords);
-            }
-        }
-    }, [fullTranscript, analysisComplete]);
-
     const getPhaseDescription = () => {
         switch(currentPhase) {
+            case 'ready':
+                return 'Ready to listen to your complaint';
             case 'listening':
                 return 'Listening to your complaint...';
             case 'analyzing':
@@ -262,6 +213,7 @@ export default function AIVoiceComplaint() {
 
     const getPhaseProgress = () => {
         switch(currentPhase) {
+            case 'ready': return 0;
             case 'listening': return 25;
             case 'analyzing': return 50;
             case 'reviewing': return 75;
@@ -319,6 +271,7 @@ export default function AIVoiceComplaint() {
                         {/* Current Phase Status */}
                         <div className="mb-6 p-4 bg-[#383f51] rounded-lg border border-purple-500/30">
                             <div className="flex items-center gap-3 mb-2">
+                                {currentPhase === 'ready' && <FaMicrophone className="text-purple-400" />}
                                 {currentPhase === 'listening' && <FaMicrophone className="text-purple-400 animate-pulse" />}
                                 {currentPhase === 'analyzing' && <FaBrain className="text-blue-400 animate-spin" />}
                                 {currentPhase === 'reviewing' && <FaFileAlt className="text-green-400" />}
@@ -326,9 +279,10 @@ export default function AIVoiceComplaint() {
                                 <h3 className="text-lg font-semibold capitalize">{currentPhase} Phase</h3>
                             </div>
                             <p className="text-white/70 text-sm">
-                                {currentPhase === 'listening' && "Speak your complaint naturally. I'm listening to everything you say and will analyze it automatically."}
+                                {currentPhase === 'ready' && "Click the microphone button to start recording your complaint."}
+                                {currentPhase === 'listening' && "Speak your complaint naturally. The system is capturing everything you say."}
                                 {currentPhase === 'analyzing' && "AI is processing your speech and creating a structured complaint report."}
-                                {currentPhase === 'reviewing' && "Review the AI-generated complaint details. Say 'submit' to confirm or 'modify' to record again."}
+                                {currentPhase === 'reviewing' && "Review the AI-generated complaint details and click submit when ready."}
                                 {currentPhase === 'submitting' && "Securely submitting your complaint to the system."}
                             </p>
                         </div>
@@ -339,14 +293,14 @@ export default function AIVoiceComplaint() {
                             {!analysisComplete ? (
                                 <button
                                     onClick={isListening ? stopListening : startListening}
-                                    disabled={isSpeaking || isAnalyzing}
+                                    disabled={isAnalyzing}
                                     className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 border-3 ${
                                         isListening 
                                             ? 'bg-red-500 border-red-400 shadow-lg shadow-red-500/20 animate-pulse' 
                                             : isAnalyzing
                                             ? 'bg-blue-500 border-blue-400 animate-pulse'
                                             : 'bg-purple-600 border-purple-500 hover:bg-purple-700'
-                                    } ${(isSpeaking || isAnalyzing) ? 'opacity-75' : ''}`}
+                                    } ${isAnalyzing ? 'opacity-75' : ''}`}
                                 >
                                     {isAnalyzing ? (
                                         <FaBrain className="text-white text-3xl animate-spin" />
@@ -361,14 +315,14 @@ export default function AIVoiceComplaint() {
                                     <button
                                         onClick={() => handleVoiceCommand('submit')}
                                         disabled={currentPhase === 'submitting'}
-                                        className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                                        className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 text-lg"
                                     >
                                         Submit Complaint
                                     </button>
                                     <button
                                         onClick={() => handleVoiceCommand('modify')}
                                         disabled={currentPhase === 'submitting'}
-                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                                        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 text-lg"
                                     >
                                         Record Again
                                     </button>
@@ -377,34 +331,45 @@ export default function AIVoiceComplaint() {
 
                             {/* Status Display */}
                             <div className="text-center">
-                                {isSpeaking && (
-                                    <div className="flex items-center gap-2 text-blue-400 mb-2">
-                                        <FaVolumeUp className="animate-pulse" />
-                                        <span className="text-sm">Assistant Speaking...</span>
-                                    </div>
-                                )}
                                 {isListening && (
                                     <div className="flex items-center gap-2 text-red-400 mb-2">
                                         <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                                        <span className="text-sm">Listening to your complaint...</span>
+                                        <span className="text-sm">Recording your complaint...</span>
                                     </div>
                                 )}
                                 {isAnalyzing && (
                                     <div className="flex items-center gap-2 text-blue-400 mb-2">
                                         <FaBrain className="animate-spin text-sm" />
-                                        <span className="text-sm">AI Analyzing...</span>
+                                        <span className="text-sm">AI is analyzing your speech...</span>
                                     </div>
+                                )}
+                                {currentPhase === 'ready' && (
+                                    <span className="text-sm text-white/60">Click microphone to start recording</span>
+                                )}
+                                {analysisComplete && (
+                                    <span className="text-sm text-green-400">Analysis complete! Review and submit below.</span>
                                 )}
                             </div>
 
-                            {/* Live Transcript */}
+                            {/* Live Speech-to-Text Display */}
                             {(transcript || fullTranscript) && (
-                                <div className="w-full bg-[#383f51] rounded-lg p-4 border border-[#AB9F9D]/30 max-h-40 overflow-y-auto">
-                                    <h4 className="text-sm font-medium text-purple-400 mb-2">Live Transcript:</h4>
-                                    <p className="text-sm text-white/80 leading-relaxed">
-                                        {fullTranscript}
-                                        {transcript && <span className="text-purple-400">{transcript}</span>}
-                                    </p>
+                                <div className="w-full bg-[#383f51] rounded-lg p-4 border border-[#AB9F9D]/30 max-h-48 overflow-y-auto">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <FaMicrophone className="text-purple-400 text-sm" />
+                                        <h4 className="text-sm font-medium text-purple-400">Speech-to-Text</h4>
+                                        {isListening && <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse ml-auto"></div>}
+                                    </div>
+                                    <div className="text-sm text-white/90 leading-relaxed">
+                                        <span className="text-white">{fullTranscript}</span>
+                                        {transcript && <span className="text-purple-400 bg-purple-400/10 px-1 rounded">{transcript}</span>}
+                                    </div>
+                                    {fullTranscript && (
+                                        <div className="mt-2 pt-2 border-t border-white/10">
+                                            <span className="text-xs text-white/50">
+                                                {fullTranscript.split(' ').length} words captured
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -419,10 +384,24 @@ export default function AIVoiceComplaint() {
 
                         {!analysisComplete ? (
                             <div className="flex flex-col items-center justify-center h-96 text-center">
-                                <FaBrain className="text-6xl text-purple-400/30 mb-4" />
-                                <h3 className="text-lg font-medium text-white/70 mb-2">Waiting for Analysis</h3>
-                                <p className="text-sm text-white/50">
-                                    Speak your complaint and the AI will automatically generate a structured report
+                                <div className="relative mb-6">
+                                    <FaBrain className="text-6xl text-purple-400/30" />
+                                    {isListening && (
+                                        <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                                    )}
+                                    {isAnalyzing && (
+                                        <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full animate-spin"></div>
+                                    )}
+                                </div>
+                                <h3 className="text-lg font-medium text-white/70 mb-2">
+                                    {currentPhase === 'ready' && 'Ready to Record'}
+                                    {currentPhase === 'listening' && 'Listening...'}
+                                    {currentPhase === 'analyzing' && 'AI Processing...'}
+                                </h3>
+                                <p className="text-sm text-white/50 max-w-md">
+                                    {currentPhase === 'ready' && 'Click the microphone to start recording your complaint. Speak naturally and the AI will structure it automatically.'}
+                                    {currentPhase === 'listening' && 'Speak your complaint clearly. The system is capturing everything you say and will analyze it when you\'re done.'}
+                                    {currentPhase === 'analyzing' && 'AI is processing your speech and generating a structured complaint report. Please wait...'}
                                 </p>
                             </div>
                         ) : (
