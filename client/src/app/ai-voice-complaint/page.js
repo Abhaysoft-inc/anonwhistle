@@ -99,7 +99,7 @@ export default function AIVoiceComplaint() {
             updateAudioLevel();
         } catch (error) {
             console.error('Audio level monitoring failed:', error);
-            // Set a default level so it doesn't show "No audio detected"
+            // Set a default level so it doesn&apos;t show &quot;No audio detected&quot;
             setAudioLevel(50);
         }
     };
@@ -169,7 +169,7 @@ export default function AIVoiceComplaint() {
                     console.error('Speech recognition error:', event.error);
                     
                     if (event.error === 'no-speech') {
-                        // Don't stop listening for no-speech errors, just continue
+                        // Don&apos;t stop listening for no-speech errors, just continue
                         console.log('No speech detected, but continuing to listen...');
                         return;
                     }
@@ -180,7 +180,7 @@ export default function AIVoiceComplaint() {
                         alert('Microphone permission denied. Please enable microphone access in your browser settings.');
                     } else if (event.error === 'network') {
                         console.log('Network error, continuing to listen...');
-                        return; // Don't stop for network errors
+                        return; // Don&apos;t stop for network errors
                     }
                     
                     // Only stop for serious errors
@@ -532,7 +532,7 @@ export default function AIVoiceComplaint() {
                                 </div>
                                 <p className="text-sm text-red-300">
                                     Please allow microphone access in your browser to use the voice complaint feature.
-                                    Click the microphone icon in your browser's address bar and select "Allow".
+                                    Click the microphone icon in your browser&apos;s address bar and select &quot;Allow&quot;.
                                 </p>
                             </div>
                         )}
