@@ -2,20 +2,45 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaCheckCircle, FaShieldAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaShieldAlt, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
+import { authAPI, storage } from '@/utils/api';
 
 export default function RegistrationForm({ walletAddress, selectedWallet, onDisconnect }) {
     const [username, setUsername] = useState('');
     const [agreedToTerms, setAgreedToTerms] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
     const router = useRouter();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Registering with:', { username, walletAddress, selectedWallet });
-        // Store wallet address in localStorage for dashboard access
-        localStorage.setItem('walletAddress', walletAddress);
-        // Redirect to dashboard
-        router.push('/dashboard');
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            // Register with wallet address
+            const response = await authAPI.registerWithWallet(
+                walletAddress,
+                username.trim() || null
+            );
+
+            if (response.success) {
+                // Store auth data
+                storage.setAuthToken(response.token);
+                storage.setUserData(response.user);
+
+                // Show success message
+                console.log('Registration successful:', response.message);
+
+                // Redirect to dashboard
+                router.push('/dashboard');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            setError(error.message || 'Registration failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -36,6 +61,17 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
                     Complete Your Registration
                 </h2>
 
+                {/* Error Message */}
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
+                        <FaExclamationTriangle className="text-red-400 text-xl flex-shrink-0" />
+                        <div>
+                            <div className="text-red-400 font-semibold">Registration Error</div>
+                            <div className="text-gray-400 text-sm">{error}</div>
+                        </div>
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Username */}
                     <div>
@@ -47,7 +83,9 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             placeholder="Enter a pseudonym or leave blank for auto-generated"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition"
+                            disabled={isSubmitting}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition disabled:opacity-50"
+                            maxLength={50}
                         />
                         <p className="text-gray-400 text-sm mt-2">
                             This will be used as your display name. Leave blank for an auto-generated anonymous ID.
@@ -107,15 +145,24 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={!agreedToTerms}
-                        className={`w-full py-4 rounded-full font-bold text-lg transition-all ${agreedToTerms
-                            ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
-                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                        disabled={!agreedToTerms || isSubmitting}
+                        className={`w-full py-4 rounded-full font-bold text-lg transition-all ${agreedToTerms && !isSubmitting
+                                ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
+                                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         <div className="flex items-center justify-center gap-2">
-                            <FaCheckCircle />
-                            Complete Anonymous Registration
+                            {isSubmitting ? (
+                                <>
+                                    <FaSpinner className="animate-spin" />
+                                    Registering...
+                                </>
+                            ) : (
+                                <>
+                                    <FaCheckCircle />
+                                    Complete Anonymous Registration
+                                </>
+                            )}
                         </div>
                     </button>
                 </form>
