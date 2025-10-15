@@ -350,11 +350,10 @@ export default function Dashboard() {
                                             onMouseLeave={handlePanicRelease}
                                             onTouchStart={handlePanicPress}
                                             onTouchEnd={handlePanicRelease}
-                                            className={`relative px-6 py-4 rounded-lg font-bold text-white transition-all transform select-none ${
-                                                isPanicPressed
+                                            className={`relative px-6 py-4 rounded-lg font-bold text-white transition-all transform select-none ${isPanicPressed
                                                     ? 'bg-red-700 scale-95 shadow-inner'
                                                     : 'bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-xl'
-                                            }`}
+                                                }`}
                                         >
                                             🚨 EMERGENCY
                                             {isPanicPressed && panicCountdown > 0 && (
