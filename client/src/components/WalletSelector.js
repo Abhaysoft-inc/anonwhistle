@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { FaWallet, FaEthereum } from 'react-icons/fa';
 import { MdAccountBalanceWallet } from 'react-icons/md';
 import { RiWallet3Fill } from 'react-icons/ri';
@@ -13,16 +14,16 @@ export default function WalletSelector({ onWalletConnect }) {
         {
             id: 'metamask',
             name: 'MetaMask',
-            icon: <RiWallet3Fill className="text-5xl" />,
+            icon: <Image src="/MetaMask_Fox.svg.png" alt="MetaMask" width={80} height={80} className="rounded-lg" />,
             color: 'text-orange-400',
             description: 'Connect with MetaMask wallet'
         },
         {
-            id: 'walletconnect',
-            name: 'WalletConnect',
-            icon: <MdAccountBalanceWallet className="text-5xl" />,
-            color: 'text-blue-400',
-            description: 'Connect via WalletConnect protocol'
+            id: 'tor',
+            name: 'Tor Browser',
+            icon: <Image src="/512px-Tor_Browser_icon.svg.png" alt="Tor Browser" width={80} height={80} className="rounded-lg" />,
+            color: 'text-purple-400',
+            description: 'Connect via Tor Browser for anonymity'
         },
 
     ];

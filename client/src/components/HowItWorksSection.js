@@ -6,25 +6,25 @@ import { HiOutlineDocumentReport } from 'react-icons/hi';
 export default function HowItWorksSection() {
     const steps = [
         {
-            step: '01',
+
             icon: <HiOutlineDocumentReport className="text-4xl" />,
             title: 'Submit Report',
             description: 'Securely upload evidence and details via Tor network'
         },
         {
-            step: '02',
+
             icon: <FaBrain className="text-4xl" />,
             title: 'AI Analysis',
             description: 'Our AI categorizes and prioritizes your case automatically'
         },
         {
-            step: '03',
+
             icon: <FaEthereum className="text-4xl" />,
             title: 'Blockchain Storage',
             description: 'Evidence is encrypted and stored on immutable blockchain'
         },
         {
-            step: '04',
+
             icon: <FaCheckCircle className="text-4xl" />,
             title: 'Case Resolution',
             description: 'Authorities investigate and resolve with full transparency'

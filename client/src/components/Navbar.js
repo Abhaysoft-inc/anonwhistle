@@ -14,8 +14,8 @@ export default function Navbar() {
                     </Link>
                     <div className="hidden md:flex space-x-8">
                         <a href="#features" className="text-gray-300 hover:text-cyan-400 transition">Features</a>
-                        <a href="#how-it-works" className="text-gray-300 hover:text-cyan-400 transition">How It Works</a>
-                        <a href="#security" className="text-gray-300 hover:text-cyan-400 transition">Security</a>
+
+
                         <Link href="/leaderboard" className="text-gray-300 hover:text-cyan-400 transition">Leaderboard</Link>
                         <Link href="/official-login" className="text-gray-300 hover:text-cyan-400 transition">Officials</Link>
                         <a href="#contact" className="text-gray-300 hover:text-cyan-400 transition">Contact</a>

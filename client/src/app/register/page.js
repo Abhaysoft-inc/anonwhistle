@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { FaShieldAlt, FaArrowLeft, FaUserSecret } from 'react-icons/fa';
 import Link from 'next/link';
 import WalletSelector from '@/components/WalletSelector';
@@ -31,7 +32,22 @@ export default function Register() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition">
-                            <FaShieldAlt className="text-3xl text-cyan-400" />
+                            <div className="flex items-center space-x-2">
+                                <Image
+                                    src="/512px-Tor_Browser_icon.svg.png"
+                                    alt="Tor Browser"
+                                    width={32}
+                                    height={32}
+                                    className="rounded-lg"
+                                />
+                                <Image
+                                    src="/MetaMask_Fox.svg.png"
+                                    alt="MetaMask"
+                                    width={32}
+                                    height={32}
+                                    className="rounded-lg"
+                                />
+                            </div>
                             <span className="text-2xl font-bold text-white">AnonWhistle</span>
                         </Link>
                         <Link href="/" className="flex items-center gap-2 text-gray-300 hover:text-cyan-400 transition">
