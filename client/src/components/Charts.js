@@ -87,7 +87,10 @@ const ChartCard = ({ title, data, type = 'bar' }) => {
     );
 };
 
-const LineChart = ({ title, data, trend }) => {
+const LineChart = ({ title, data, trend, labels }) => {
+    const maxValue = Math.max(...data);
+    const monthLabels = labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+    
     return (
         <div className="bg-[#383f51] rounded-xl p-6 shadow-sm border border-[#AB9F9D]/30">
             <div className="flex items-center justify-between mb-4">
@@ -98,19 +101,31 @@ const LineChart = ({ title, data, trend }) => {
                     <span>{Math.abs(trend)}%</span>
                 </div>
             </div>
-            <div className="h-32 flex items-end space-x-2">
+            <div className="h-32 flex items-end space-x-2 mb-2">
                 {data.map((value, index) => {
-                    const height = (value / Math.max(...data)) * 100;
+                    const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
                     return (
-                        <div key={index} className="flex-1 flex flex-col items-center">
-                            <div
-                                className="bg-[#DDDBF1] rounded-t transition-all duration-500 w-full"
-                                style={{ height: `${height}%` }}
-                            ></div>
-                            <span className="text-xs text-white/70 mt-2">{index + 1}</span>
+                        <div key={index} className="flex-1 flex flex-col items-center group">
+                            <div className="relative w-full">
+                                {/* Tooltip on hover */}
+                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 whitespace-nowrap">
+                                    {value} complaints
+                                </div>
+                                <div
+                                    className="bg-gradient-to-t from-blue-600 to-blue-400 rounded-t transition-all duration-500 w-full hover:from-blue-500 hover:to-blue-300"
+                                    style={{ height: `${Math.max(height, 2)}px`, minHeight: '2px' }}
+                                ></div>
+                            </div>
+                            <span className="text-xs text-white/70 mt-2 font-medium">
+                                {monthLabels[index] || (index + 1)}
+                            </span>
                         </div>
                     );
                 })}
+            </div>
+            <div className="flex justify-between items-center text-xs text-white/50 border-t border-white/10 pt-2">
+                <span>Total: {data.reduce((sum, val) => sum + val, 0)} complaints</span>
+                <span>Avg: {Math.round(data.reduce((sum, val) => sum + val, 0) / data.length)}</span>
             </div>
         </div>
     );

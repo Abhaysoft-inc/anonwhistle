@@ -26,14 +26,7 @@ export default function NewComplaint() {
     expectedOutcome: ''
   });
 
-  useEffect(() => {
-    const address = localStorage.getItem('walletAddress');
-    if (!address) {
-      router.push('/register');
-    } else {
-      setWalletAddress(`${address.slice(0, 6)}...${address.slice(-4)}`);
-    }
-  }, [router]);
+
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
