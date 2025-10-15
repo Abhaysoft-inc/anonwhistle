@@ -1,0 +1,15 @@
+node_modules
+/.cache
+node_modules/.yarn-integrity
+node_modules/.yarn-metadata.json
+node_modules/.yarn.lock
+node_modules/.pnp.js
+node_modules/.pnp.cjs
+node_modules/.pnp.mjs
+node_modules/.pnp.js.map
+node_modules/.pnp.cjs.map
+node_modules/.pnp.mjs.map
+dist
+build
+.env.local
+.next/
