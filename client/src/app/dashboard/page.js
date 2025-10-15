@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FaShieldAlt, FaNetworkWired, FaPlus, FaHistory, FaClock, FaCheckCircle, FaExclamationCircle, FaFileAlt, FaUser, FaMicrophone, FaMicrophoneSlash, FaRobot, FaBuilding, FaExclamationTriangle } from 'react-icons/fa';
 import { BiLogOut } from 'react-icons/bi';
 import Link from 'next/link';
+import { complaintsAPI, storage } from '@/utils/api';
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState('raise');
@@ -31,14 +32,25 @@ export default function Dashboard() {
     const [showDecoyScreen, setShowDecoyScreen] = useState(false);
 
     useEffect(() => {
-        // Get wallet address from localStorage
-        const address = localStorage.getItem('walletAddress');
-        if (!address) {
-            // Redirect to register if not logged in
+        // Check authentication
+        const token = localStorage.getItem('authToken');
+        const userData = localStorage.getItem('userData');
+
+        if (!token || !userData) {
+            // Redirect to register if not authenticated
             router.push('/register');
-        } else {
-            // Format address for display
-            setWalletAddress(`${address.slice(0, 6)}...${address.slice(-4)}`);
+            return;
+        }
+
+        try {
+            const user = JSON.parse(userData);
+            setWalletAddress(`${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`);
+
+            // Load user complaints and stats
+            loadUserData();
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+            router.push('/register');
         }
 
         // Initialize speech recognition
@@ -68,6 +80,16 @@ export default function Dashboard() {
             setRecognition(speechRecognition);
         }
     }, [router]);
+
+    const loadUserData = async () => {
+        try {
+            // This would load real data from API
+            // For now, we'll keep the mock data but structure it properly
+            console.log('Loading user data...');
+        } catch (error) {
+            console.error('Error loading user data:', error);
+        }
+    };
 
     // Mock past complaints
     const pastComplaints = [
@@ -156,15 +178,35 @@ export default function Dashboard() {
         }
     }, [assistantResponse]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('New complaint:', complaint);
-        alert('Complaint submitted successfully!');
-        setComplaint({ title: '', department: '', description: '', evidence: null });
+
+        try {
+            const evidenceFiles = complaint.evidence ? [complaint.evidence] : [];
+
+            const response = await complaintsAPI.submitComplaint({
+                title: complaint.title,
+                description: complaint.description,
+                department: complaint.department
+            }, evidenceFiles);
+
+            if (response.success) {
+                alert('Complaint submitted successfully!');
+                setComplaint({ title: '', department: '', description: '', evidence: null });
+                // Reload user data to update stats
+                loadUserData();
+            }
+        } catch (error) {
+            console.error('Error submitting complaint:', error);
+            alert('Failed to submit complaint: ' + error.message);
+        }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('walletAddress');
+        // Clear all stored data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('walletAddress'); // Legacy support
         router.push('/');
     };
 
