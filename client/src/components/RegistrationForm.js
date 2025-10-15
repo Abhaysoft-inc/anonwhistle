@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaCheckCircle, FaShieldAlt, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
-import { authAPI, storage } from '@/utils/api';
 
 export default function RegistrationForm({ walletAddress, selectedWallet, onDisconnect }) {
     const [username, setUsername] = useState('');
@@ -18,26 +17,27 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
         setError(null);
 
         try {
-            // Register with wallet address
-            const response = await authAPI.registerWithWallet(
+            // Simulate registration process for frontend-only mode
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Store basic auth data locally (no backend)
+            const userData = {
                 walletAddress,
-                username.trim() || null
-            );
+                username: username.trim() || `Anonymous_${walletAddress.slice(-6)}`,
+                registeredAt: new Date().toISOString()
+            };
 
-            if (response.success) {
-                // Store auth data
-                storage.setAuthToken(response.token);
-                storage.setUserData(response.user);
+            localStorage.setItem('authToken', 'frontend_token_' + Date.now());
+            localStorage.setItem('userData', JSON.stringify(userData));
 
-                // Show success message
-                console.log('Registration successful:', response.message);
+            // Show success message
+            console.log('Registration successful (frontend only)');
 
-                // Redirect to dashboard
-                router.push('/dashboard');
-            }
+            // Redirect to dashboard
+            router.push('/dashboard');
         } catch (error) {
             console.error('Registration error:', error);
-            setError(error.message || 'Registration failed. Please try again.');
+            setError('Registration failed. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -147,8 +147,8 @@ export default function RegistrationForm({ walletAddress, selectedWallet, onDisc
                         type="submit"
                         disabled={!agreedToTerms || isSubmitting}
                         className={`w-full py-4 rounded-full font-bold text-lg transition-all ${agreedToTerms && !isSubmitting
-                                ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
-                                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                            ? 'bg-cyan-600 hover:bg-cyan-700 text-white'
+                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         <div className="flex items-center justify-center gap-2">
