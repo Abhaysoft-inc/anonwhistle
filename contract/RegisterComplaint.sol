@@ -1,163 +1,210 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//https://sepolia.etherscan.io/tx/0xf32a6623000a343d0aa2d68809a6897ebeb2b893e311e52c5eba20da7b908216
 
-contract WhistleblowerRegistry {
-    
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+/**
+ * @title ComplaintRegistry
+ * @notice Stores complaint proofs (CID + hash) on-chain.
+ *         Sensitive content stays encrypted off-chain (e.g. IPFS).
+ */
+
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
+contract ComplaintRegistry is AccessControl {
+    bytes32 public constant DEPARTMENT_ROLE = keccak256("DEPARTMENT_ROLE");
+    bytes32 public constant AUDITOR_ROLE = keccak256("AUDITOR_ROLE");
+
+    uint256 public nextId;
+
+    enum Status {
+        Submitted,
+        UnderReview,
+        Resolved,
+        Rejected
+    }
+
     struct Complaint {
-        bytes32 complaintHash;
+        uint256 id;
+        address submitter;
+        string cid; // Pointer to encrypted blob (IPFS CID or URL)
+        bytes32 commitment; // keccak256 hash proving integrity
+        uint8 severity; // severity code
+        uint8 deptCode; // department code
+        Status status;
         uint256 timestamp;
-        string category;
-        bool isResolved;
-        address investigator;
-        string resolutionNotes;
-        uint256 resolvedAt;
     }
-    
-    address public admin;
-    mapping(uint256 => Complaint) public complaints;
-    mapping(address => bool) public authorizedInvestigators;
-    uint256 public complaintCount;
-    
-    event ComplaintRegistered(uint256 indexed complaintId, bytes32 complaintHash, string category, uint256 timestamp);
-    event ComplaintAssigned(uint256 indexed complaintId, address investigator);
-    event ComplaintResolved(uint256 indexed complaintId, uint256 resolvedAt);
-    event InvestigatorAuthorized(address investigator);
-    event InvestigatorRevoked(address investigator);
-    
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Only admin can perform this action");
-        _;
-    }
-    
-    modifier onlyInvestigator() {
-        require(authorizedInvestigators[msg.sender] || msg.sender == admin, "Not authorized investigator");
-        _;
-    }
-    
-    constructor() {
-        admin = msg.sender;
-        authorizedInvestigators[msg.sender] = true;
-    }
-    
+
+    mapping(uint256 => Complaint) private complaints;
+    mapping(uint256 => mapping(address => string)) private encryptedKeyURIs;
+
+    event ComplaintAdded(
+        uint256 indexed id,
+        address indexed submitter,
+        bytes32 commitment,
+        string cid
+    );
+    event ComplaintStatusChanged(uint256 indexed id, Status status);
+    event EncryptedKeyURISet(
+        uint256 indexed id,
+        address indexed investigator,
+        string uri
+    );
+
     /**
-     * @dev Register a new whistleblowing complaint
-     * @param _complaintHash Hash of the complaint details (for privacy)
-     * @param _category Category of the complaint
+     * @dev Constructor: grant DEFAULT_ADMIN_ROLE to deployer/admin.
      */
-    function registerComplaint(bytes32 _complaintHash, string memory _category) external returns (uint256) {
-        require(_complaintHash != bytes32(0), "Invalid complaint hash");
-        require(bytes(_category).length > 0, "Category cannot be empty");
-        
-        complaintCount++;
-        
-        complaints[complaintCount] = Complaint({
-            complaintHash: _complaintHash,
-            timestamp: block.timestamp,
-            category: _category,
-            isResolved: false,
-            investigator: address(0),
-            resolutionNotes: "",
-            resolvedAt: 0
+    constructor(address admin) {
+        require(admin != address(0), "admin zero address");
+        _grantRole(DEFAULT_ADMIN_ROLE, admin);
+        nextId = 1;
+    }
+
+    /**
+     * @notice Add a new complaint record.
+     */
+    function addComplaint(
+        string calldata cid,
+        bytes32 commitment,
+        uint8 severity,
+        uint8 deptCode
+    ) external returns (uint256) {
+        require(bytes(cid).length > 0, "cid required");
+        require(commitment != bytes32(0), "commitment required");
+
+        uint256 id = nextId++;
+        complaints[id] = Complaint({
+            id: id,
+            submitter: msg.sender,
+            cid: cid,
+            commitment: commitment,
+            severity: severity,
+            deptCode: deptCode,
+            status: Status.Submitted,
+            timestamp: block.timestamp
         });
-        
-        emit ComplaintRegistered(complaintCount, _complaintHash, _category, block.timestamp);
-        
-        return complaintCount;
+
+        emit ComplaintAdded(id, msg.sender, commitment, cid);
+        return id;
     }
-    
+
     /**
-     * @dev Assign an investigator to a complaint
-     * @param _complaintId ID of the complaint
-     * @param _investigator Address of the investigator
+     * @notice Only department role can update complaint status.
      */
-    function assignInvestigator(uint256 _complaintId, address _investigator) external onlyAdmin {
-        require(_complaintId > 0 && _complaintId <= complaintCount, "Invalid complaint ID");
-        require(authorizedInvestigators[_investigator], "Investigator not authorized");
-        require(!complaints[_complaintId].isResolved, "Complaint already resolved");
-        
-        complaints[_complaintId].investigator = _investigator;
-        
-        emit ComplaintAssigned(_complaintId, _investigator);
+    function setStatus(
+        uint256 id,
+        Status newStatus
+    ) external onlyRole(DEPARTMENT_ROLE) {
+        require(exists(id), "complaint not found");
+        complaints[id].status = newStatus;
+        emit ComplaintStatusChanged(id, newStatus);
     }
-    
+
     /**
-     * @dev Resolve a complaint
-     * @param _complaintId ID of the complaint
-     * @param _resolutionNotes Notes about the resolution
+     * @notice Store pointer (URI) to the encrypted symmetric key for a given investigator.
      */
-    function resolveComplaint(uint256 _complaintId, string memory _resolutionNotes) external onlyInvestigator {
-        require(_complaintId > 0 && _complaintId <= complaintCount, "Invalid complaint ID");
-        Complaint storage complaint = complaints[_complaintId];
-        require(!complaint.isResolved, "Complaint already resolved");
-        require(complaint.investigator == msg.sender || msg.sender == admin, "Not assigned investigator");
-        
-        complaint.isResolved = true;
-        complaint.resolutionNotes = _resolutionNotes;
-        complaint.resolvedAt = block.timestamp;
-        
-        emit ComplaintResolved(_complaintId, block.timestamp);
-    }
-    
-    /**
-     * @dev Authorize a new investigator
-     * @param _investigator Address to authorize
-     */
-    function authorizeInvestigator(address _investigator) external onlyAdmin {
-        require(_investigator != address(0), "Invalid address");
-        require(!authorizedInvestigators[_investigator], "Already authorized");
-        
-        authorizedInvestigators[_investigator] = true;
-        
-        emit InvestigatorAuthorized(_investigator);
-    }
-    
-    /**
-     * @dev Revoke investigator authorization
-     * @param _investigator Address to revoke
-     */
-    function revokeInvestigator(address _investigator) external onlyAdmin {
-        require(_investigator != admin, "Cannot revoke admin");
-        require(authorizedInvestigators[_investigator], "Not an authorized investigator");
-        
-        authorizedInvestigators[_investigator] = false;
-        
-        emit InvestigatorRevoked(_investigator);
-    }
-    
-    /**
-     * @dev Get complaint details
-     * @param _complaintId ID of the complaint
-     */
-    function getComplaint(uint256 _complaintId) external view returns (
-        bytes32 complaintHash,
-        uint256 timestamp,
-        string memory category,
-        bool isResolved,
+    function setEncryptedKeyURI(
+        uint256 id,
         address investigator,
-        string memory resolutionNotes,
-        uint256 resolvedAt
-    ) {
-        require(_complaintId > 0 && _complaintId <= complaintCount, "Invalid complaint ID");
-        Complaint memory complaint = complaints[_complaintId];
-        
+        string calldata uri
+    ) external {
+        require(exists(id), "complaint not found");
+        require(investigator != address(0), "invalid investigator");
+        require(bytes(uri).length > 0, "uri required");
+
+        if (msg.sender != complaints[id].submitter) {
+            require(
+                hasRole(DEFAULT_ADMIN_ROLE, msg.sender) ||
+                    hasRole(AUDITOR_ROLE, msg.sender),
+                "not allowed"
+            );
+        }
+
+        encryptedKeyURIs[id][investigator] = uri;
+        emit EncryptedKeyURISet(id, investigator, uri);
+    }
+
+    function getEncryptedKeyURI(
+        uint256 id,
+        address investigator
+    ) external view returns (string memory) {
+        require(exists(id), "complaint not found");
+        return encryptedKeyURIs[id][investigator];
+    }
+
+    function getComplaint(
+        uint256 id
+    )
+        external
+        view
+        returns (
+            uint256,
+            address,
+            string memory,
+            bytes32,
+            uint8,
+            uint8,
+            Status,
+            uint256
+        )
+    {
+        require(exists(id), "complaint not found");
+        Complaint storage c = complaints[id];
         return (
-            complaint.complaintHash,
-            complaint.timestamp,
-            complaint.category,
-            complaint.isResolved,
-            complaint.investigator,
-            complaint.resolutionNotes,
-            complaint.resolvedAt
+            c.id,
+            c.submitter,
+            c.cid,
+            c.commitment,
+            c.severity,
+            c.deptCode,
+            c.status,
+            c.timestamp
         );
     }
-    
-    /**
-     * @dev Transfer admin rights
-     * @param _newAdmin Address of new admin
-     */
-    function transferAdmin(address _newAdmin) external onlyAdmin {
-        require(_newAdmin != address(0), "Invalid address");
-        admin = _newAdmin;
-        authorizedInvestigators[_newAdmin] = true;
+
+    function listComplaints(
+        uint256 startId,
+        uint256 count
+    ) external view returns (Complaint[] memory) {
+        require(count <= 200, "count too large");
+        require(startId > 0 && startId < nextId, "start out of range");
+
+        uint256 available = nextId - startId;
+        uint256 take = available < count ? available : count;
+        Complaint[] memory out = new Complaint[](take);
+
+        for (uint256 i = 0; i < take; i++) {
+            out[i] = complaints[startId + i];
+        }
+        return out;
+    }
+
+    function exists(uint256 id) public view returns (bool) {
+        return id > 0 && id < nextId && complaints[id].timestamp != 0;
+    }
+
+    // ---- Admin helpers ----
+    function grantDepartmentRole(
+        address account
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(DEPARTMENT_ROLE, account);
+    }
+
+    function revokeDepartmentRole(
+        address account
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _revokeRole(DEPARTMENT_ROLE, account);
+    }
+
+    function grantAuditorRole(
+        address account
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(AUDITOR_ROLE, account);
+    }
+
+    function revokeAuditorRole(
+        address account
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _revokeRole(AUDITOR_ROLE, account);
     }
 }
